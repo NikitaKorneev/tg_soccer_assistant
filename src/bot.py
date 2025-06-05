@@ -147,9 +147,9 @@ async def handle_players_setup(message: Message):
 
         players_list = "\n".join([player['username']+ ": " for k, player in players.items()])
 
-        if len(players.keys()) > 1:
+        if len(players.keys()) > 1:  # TODO: Add admins list
             await message.answer(
-                f"{"\n".join(admins_name)}\n Пришла пора кому то из админов оценить уровень футболистов в этой "
+                f"Пришла пора кому то из админов оценить уровень футболистов в этой "
                 f"конфе.\n\n{rate_call}\n\n{example}"
             )
             await message.answer(

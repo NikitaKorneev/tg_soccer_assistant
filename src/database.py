@@ -13,11 +13,10 @@ from sqlalchemy.orm import sessionmaker
 
 from aiogram.types import Message, Poll, PollAnswer
 
-load_dotenv(".env")
+load_dotenv("../.env")
 
 # Database setup
-# DATABASE_URL = os.getenv("DATABASE_URL")
-DATABASE_URL = "postgresql://postgres:postgres@127.0.0.1:5432/soccer_assistant_bot"
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 engine = create_engine(DATABASE_URL, echo=False)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
