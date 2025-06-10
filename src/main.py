@@ -1,5 +1,5 @@
 import asyncio
-from bot import mainloop
+from src.telegram_bot.bot import mainloop
 
 
 async def main():
@@ -7,4 +7,3 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-
