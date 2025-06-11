@@ -1,13 +1,11 @@
-import asyncio
 import json
 
 from abc import ABC, abstractmethod
 
 from aiogram import Bot, Router
-from aiogram.types import Message, PollAnswer
+from aiogram.types import PollAnswer
 
-from src.database.database import DatabaseManager, Polls, Chats, Admins
-from src.telegram_bot.responses import texts
+from src.database.database import DatabaseManager, Polls
 
 
 async def players_list_extractor(existing_players):

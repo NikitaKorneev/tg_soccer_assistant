@@ -1,7 +1,5 @@
 import os
-import json
 from dotenv import load_dotenv
-from datetime import datetime
 
 from typing import Optional, Union, List
 
@@ -10,8 +8,6 @@ from sqlalchemy.engine.row import Row
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker
-
-from aiogram.types import Message, Poll, PollAnswer
 
 load_dotenv("../../.env")
 

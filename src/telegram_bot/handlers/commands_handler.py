@@ -1,16 +1,15 @@
 import datetime
 import json
-from pprint import pformat
 
 from abc import ABC, abstractmethod
 from aiogram import Bot, Router, F
-from aiogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup, InputPollOption, ReplyKeyboardMarkup, KeyboardButton
+from aiogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup, InputPollOption
 from aiogram.filters import CommandStart, Command
 
 from src.database.database import DatabaseManager, Polls, Chats, Admins
 from src.telegram_bot.responses import texts
 
-from src.telegram_bot.handlers.callbacks_handler import InitCallback, TeamManagerCallback
+from src.telegram_bot.handlers.callbacks_handler import InitCallback
 
 
 async def players_list_extractor(existing_players):
@@ -21,6 +20,7 @@ async def players_list_extractor(existing_players):
     return existing_players_dict
 
 # --- DECORATORS ---
+
 
 def group_only(func):
     async def wrapper(self, message: Message, *args, **kwargs):
@@ -77,6 +77,21 @@ class BaseCommandHandler(ABC):
         pass
 
 
+async def get_admins_json(message: Message):
+    chat_admins = await message.chat.get_administrators()
+    admins_list = [admin.user.id for admin in chat_admins]
+
+    for admin in chat_admins:
+        if admin.status == 'creator':
+            owner_id = admin.user.id
+            owner_username = admin.user.username
+            display_name = f"@{owner_username}" if owner_username else "Владелец чата"
+            return owner_id, display_name, admins_list
+
+    # На случай, если по какой-то причине не найден владелец
+    return None, "Не удалось определить владельца", None
+
+
 class StartCommandHandler(BaseCommandHandler):
     def register(self, router: Router):
         router.message.register(
@@ -97,7 +112,7 @@ class StartCommandHandler(BaseCommandHandler):
 
         if not group_data:
 
-            admin_id, admin_username, admins_list = await self.get_admins_json(message)
+            admin_id, admin_username, admins_list = await get_admins_json(message)
             chat_name = message.chat.title
 
             self.db.upsert(
@@ -148,20 +163,6 @@ class StartCommandHandler(BaseCommandHandler):
 
         else:
             await message.answer("Вы уже всё запустили...")
-
-    async def get_admins_json(self, message: Message):
-        chat_admins = await message.chat.get_administrators()
-        admins_list = [admin.user.id for admin in chat_admins]
-
-        for admin in chat_admins:
-            if admin.status == 'creator':
-                owner_id = admin.user.id
-                owner_username = admin.user.username
-                display_name = f"@{owner_username}" if owner_username else "Владелец чата"
-                return owner_id, display_name, admins_list
-
-        # На случай, если по какой-то причине не найден владелец
-        return None, "Не удалось определить владельца", None
 
     @personal_only
     async def handle_private_start(self, message: Message, *args, **kwargs):
