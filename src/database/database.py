@@ -6,7 +6,7 @@ from typing import Optional, Union, List
 from sqlalchemy import create_engine, Column, Integer, String, DateTime, Boolean, JSON, BigInteger
 from sqlalchemy.engine.row import Row
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.orm import declarative_base
+from sqlalchemy.orm import declared_attr, declarative_base
 from sqlalchemy.orm import sessionmaker
 
 load_dotenv("../../.env")
@@ -16,14 +16,21 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 
 engine = create_engine(DATABASE_URL, echo=False)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-Base = declarative_base()
 
 
-class Chats(Base):
-    __tablename__ = "chats"
+class PreBase:
+    """Abstact model."""
+    @declared_attr
+    def __tablename__(cls):
+        return cls.__name__.lower()
 
     id = Column(Integer, primary_key=True, index=True)
 
+
+Base = declarative_base(cls=PreBase)
+
+
+class Chats(Base):
     chat_id = Column(BigInteger, unique=True, nullable=False)
     player_count = Column(BigInteger, unique=False, nullable=True, default=0)
 
@@ -34,10 +41,6 @@ class Chats(Base):
 
 
 class Admins(Base):
-    __tablename__ = "admins"
-
-    id = Column(Integer, primary_key=True, index=True)
-
     admin_id = Column(BigInteger, unique=False, nullable=False)
     admin_username = Column(String, unique=False, nullable=True)
 
@@ -46,9 +49,6 @@ class Admins(Base):
 
 
 class Polls(Base):
-    __tablename__ = "polls"
-
-    id = Column(Integer, primary_key=True, index=True)
     timestamp = Column(DateTime, nullable=False)
 
     chat_id = Column(BigInteger, unique=False, nullable=False)
