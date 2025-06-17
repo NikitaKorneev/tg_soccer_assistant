@@ -1,18 +1,9 @@
-__pycache__/
-.env
-*.pyc
-.idea/
-src/.env
-*.env
-.env.*
-.venv
-.DS_Store
-
 # Git
 .git
 .gitignore
 
 # Python cache
+__pycache__/
 *.py[cod]
 *.pyo
 
@@ -21,6 +12,7 @@ venv/
 env/
 
 # IDE
+.idea/
 .vscode/
 
 # Docker
@@ -28,6 +20,8 @@ env/
 Dockerfile
 
 # Env vars
+.env
+.env.*
 
 # Logs
 *.log
