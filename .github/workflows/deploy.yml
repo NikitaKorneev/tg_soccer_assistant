@@ -22,11 +22,15 @@ jobs:
 
     - name: Deploy via SSH
       run: |
-        ssh -i ~/.ssh/github-deploy ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
-          ls -la
-          cd ~/soccer-bot || git clone https://github.com/NikitaKorneev/tg_soccer_assistant.git ~/soccer-bot
+        ssh -i ~/.ssh/github-deploy -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
+          if [ ! -d ~/soccer-bot/.git ]; then
+            rm -rf ~/soccer-bot
+            git clone https://github.com/NikitaKorneev/tg_soccer_assistant.git ~/soccer-bot
+          fi
           cd ~/soccer-bot
+          git reset --hard
+          git clean -fd
           git pull origin main
-          docker compose down
+          docker compose down || true
           docker compose up -d --build
         "
