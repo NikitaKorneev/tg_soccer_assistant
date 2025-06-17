@@ -247,11 +247,11 @@ class PollOpenCommandHandler(BaseCommandHandler):
 
         )
 
-        call_to_arms = f'''‼️Мужчины‼️ Многоуважаемым @{message.from_user.username} созывается спортивная сессия‼️
-
+        call_to_arms = f'''
+        ‼️Мужчины‼️ Многоуважаемым @{message.from_user.username} созывается спортивная сессия‼️
 
         📍Время, место и дисциплина⌚️:{message.text.strip('/start_poll')}📍
-'''
+        '''
 
         soccer_poll = await self.bot.send_poll(
             chat_id=message.chat.id,
