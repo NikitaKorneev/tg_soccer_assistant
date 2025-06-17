@@ -24,8 +24,9 @@ jobs:
       run: |
         ssh -i ~/.ssh/github-deploy ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
           ls -la
-          cd ~/soccer-bot || git clone https://github.com/NikitaKorneev/tg_soccer_assistant.git
+          cd ~/soccer-bot || git clone https://github.com/NikitaKorneev/tg_soccer_assistant.git ~/soccer-bot
+          cd ~/soccer-bot
           git pull origin main
-          docker-compose down
-          docker-compose up -d --build
+          docker compose down
+          docker compose up -d --build
         "
