@@ -1,6 +1,3 @@
-import os
-from dotenv import load_dotenv
-
 from typing import Optional, Union, List
 
 from sqlalchemy import create_engine, Column, Integer, String, DateTime, Boolean, JSON, BigInteger
@@ -9,17 +6,14 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import declared_attr, declarative_base
 from sqlalchemy.orm import sessionmaker
 
-load_dotenv("../../.env")
-
-# Database setup
-DATABASE_URL = os.getenv("DATABASE_URL")
+from src.telegram_bot.config import DATABASE_URL
 
 engine = create_engine(DATABASE_URL, echo=False)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
 class PreBase:
-    """Abstact model."""
+    """Abstract model."""
     @declared_attr
     def __tablename__(cls):
         return cls.__name__.lower()
