@@ -3,11 +3,11 @@ from abc import ABC, abstractmethod
 from aiogram import Bot, Router, F
 from aiogram.types import Message
 
-from src.database.database import DatabaseManager
+from src.database.db import AsyncDatabaseManager
 
 
 class BaseTextHandler(ABC):
-    def __init__(self, bot: Bot, db: DatabaseManager):
+    def __init__(self, bot: Bot, db: AsyncDatabaseManager):
         self.bot = bot
         self.db = db
 

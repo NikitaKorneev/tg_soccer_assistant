@@ -5,7 +5,8 @@ from abc import ABC, abstractmethod
 from aiogram import Bot, Router
 from aiogram.types import PollAnswer
 
-from src.database.database import DatabaseManager, Polls
+from src.database.db import AsyncDatabaseManager
+from src.database.models import Polls
 
 
 async def players_list_extractor(existing_players):
@@ -17,7 +18,7 @@ async def players_list_extractor(existing_players):
 
 
 class BasePollAnswerHandler(ABC):
-    def __init__(self, bot: Bot, db: DatabaseManager):
+    def __init__(self, bot: Bot, db: AsyncDatabaseManager):
         self.bot = bot
         self.db = db
 
@@ -60,7 +61,7 @@ class PollAnswerHandler(BasePollAnswerHandler):
 
 class PollAnswersHandler:
 
-    def __init__(self, tg_bot: Bot, db: DatabaseManager):
+    def __init__(self, tg_bot: Bot, db: AsyncDatabaseManager):
         self.bot = tg_bot
         self.db = db
         self.router = Router()

@@ -11,7 +11,8 @@ from aiogram.types import CallbackQuery
 from aiogram.filters import CommandStart, Command
 from aiogram.filters.callback_data import CallbackData
 
-from src.database.database import DatabaseManager, Polls, Chats, Admins
+from src.database.db import AsyncDatabaseManager
+from src.database.models import Chats
 from src.telegram_bot.responses import texts
 
 
@@ -36,7 +37,7 @@ class TeamManagerCallback(CallbackData, prefix="tm"):
 
 
 class BaseCallbackHandler(ABC):
-    def __init__(self, bot: Bot, db: DatabaseManager):
+    def __init__(self, bot: Bot, db: AsyncDatabaseManager):
         self.bot = bot
         self.db = db
 
@@ -120,7 +121,7 @@ class TeamManagementHandler(BaseCallbackHandler):
 
 
 class CallbacksHandler:
-    def __init__(self, bot: Bot, db: DatabaseManager):
+    def __init__(self, bot: Bot, db: AsyncDatabaseManager):
         self.bot = bot
         self.db = db
         self.router = Router()
