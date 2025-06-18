@@ -5,3 +5,4 @@ aiogram~=3.20.0.post0
 psycopg2-binary~=2.9.10
 openai~=1.77.0
 pytest~=8.4.0
+aiosqlite~=0.21.0
