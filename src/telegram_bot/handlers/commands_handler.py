@@ -6,7 +6,8 @@ from aiogram import Bot, Router, F
 from aiogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup, InputPollOption
 from aiogram.filters import CommandStart, Command
 
-from src.database.database import DatabaseManager, Polls, Chats, Admins
+from src.database.db import AsyncDatabaseManager
+from src.database.models import Admins, Chats, Polls
 from src.telegram_bot.responses import texts
 
 from src.telegram_bot.handlers.callbacks_handler import InitCallback
@@ -68,7 +69,7 @@ def bot_is_admin(func):
 
 
 class BaseCommandHandler(ABC):
-    def __init__(self, bot: Bot, db: DatabaseManager):
+    def __init__(self, bot: Bot, db: AsyncDatabaseManager):
         self.bot = bot
         self.db = db
 
@@ -384,7 +385,7 @@ class PollFinishCommandHandler(BaseCommandHandler):
 
 
 class CommandsHandler:
-    def __init__(self, tg_bot: Bot, db: DatabaseManager):
+    def __init__(self, tg_bot: Bot, db: AsyncDatabaseManager):
         self.bot = tg_bot
         self.db = db
         self.router = Router()
