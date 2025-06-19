@@ -14,4 +14,3 @@ class BaseTextHandler(ABC):
     @abstractmethod
     def register(self, router: Router):
         pass
-

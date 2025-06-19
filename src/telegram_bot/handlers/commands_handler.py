@@ -109,14 +109,14 @@ class StartCommandHandler(BaseCommandHandler):
 
     async def initial_start(self, message: Message):
         """Sends initial message and collects important data regarding chat members"""
-        group_data = self.db.get_data(Chats, {"chat_id": message.chat.id})
+        group_data = await self.db.get_data(Chats, {"chat_id": message.chat.id})
 
         if not group_data:
 
             admin_id, admin_username, admins_list = await get_admins_json(message)
             chat_name = message.chat.title
 
-            self.db.upsert(
+            await self.db.upsert(
                 Admins,
                 {
                     "chat_id": message.chat.id,
@@ -152,7 +152,7 @@ class StartCommandHandler(BaseCommandHandler):
                 message_id=init_message.message_id,
             )
 
-            self.db.upsert(
+            await self.db.upsert(
                 Chats,
                 {"chat_id": message.chat.id},
                 {
@@ -167,25 +167,6 @@ class StartCommandHandler(BaseCommandHandler):
 
     @personal_only
     async def handle_private_start(self, message: Message, *args, **kwargs):
-        # await message.answer(texts.private_start)
-        #
-        # managed_teams = self.db.get_data(Admins, {"admin_id": message.chat.id}, all_records=True)
-        # if managed_teams:
-        #     teams_list_inline = [
-        #         [
-        #             InlineKeyboardButton(
-        #                 text=team.chat_name,
-        #                 callback_data=TeamManagerCallback(chat_id=team.chat_id).pack()
-        #             ) for team in managed_teams
-        #         ]
-        #     ]
-        #
-        #     await message.answer(
-        #         text="Выбери команду для отладки:",
-        #         reply_markup=InlineKeyboardMarkup(inline_keyboard=teams_list_inline),
-        #
-        #     )
-
         await message.answer("Пока этот бот работает только в групповых чатах, дружок - пирожок...")
 
 
@@ -200,7 +181,8 @@ class SetupCommandHandler(BaseCommandHandler):
         admins_list = [admin.user.id for admin in admins if not admin.user.is_bot]
 
         if message.from_user.id in admins_list:
-            players = self.db.get_data(Chats, {"chat_id": message.chat.id}).players
+            players_data = await self.db.get_data(Chats, {"chat_id": message.chat.id})
+            players = players_data.players
             if players != {}:
                 players = json.loads(players)
 
@@ -225,7 +207,7 @@ class PollOpenCommandHandler(BaseCommandHandler):
     @bot_is_admin
     @admin_only
     async def handle(self, message: Message, *args, **kwargs):
-        all_polls = self.db.get_data(
+        all_polls = await self.db.get_data(
             Polls,
             {
                 "chat_id": message.chat.id,
@@ -241,7 +223,7 @@ class PollOpenCommandHandler(BaseCommandHandler):
                 message_id=poll.poll_message_id
             )
 
-        self.db.bulk_update(
+        await self.db.bulk_update(
             Polls,
             {"chat_id": message.chat.id},
             {"is_closed": True},
@@ -266,7 +248,7 @@ class PollOpenCommandHandler(BaseCommandHandler):
             message_id=soccer_poll.message_id
         )
 
-        self.db.upsert(
+        await self.db.upsert(
             Polls,
             {"poll_id": soccer_poll.poll.id},
             {
@@ -286,7 +268,7 @@ class PollFinishCommandHandler(BaseCommandHandler):
 
     @admin_only
     async def handle_stop(self, message: Message, *args, **kwargs):
-        existing_poll = self.db.get_data(
+        existing_poll = await self.db.get_data(
             Polls,
             {
                 "chat_id": message.chat.id,
@@ -301,7 +283,7 @@ class PollFinishCommandHandler(BaseCommandHandler):
 
             )
 
-            self.db.upsert(
+            await self.db.upsert(
                 Polls,
                 {
                     "poll_id": closed_poll.id,
@@ -310,7 +292,7 @@ class PollFinishCommandHandler(BaseCommandHandler):
                 {"is_closed": True}
             )
 
-            poll_data = self.db.get_data(
+            poll_data = await self.db.get_data(
                 Polls,
                 {"poll_id": closed_poll.id}
             )
@@ -344,7 +326,7 @@ class PollFinishCommandHandler(BaseCommandHandler):
             await message.answer(final_speech)
 
     async def handle_who(self, message: Message, *args, **kwargs):
-        existing_poll = self.db.get_data(
+        existing_poll = await self.db.get_data(
             Polls,
             {
                 "chat_id": message.chat.id,

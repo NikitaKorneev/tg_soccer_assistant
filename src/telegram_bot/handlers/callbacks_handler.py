@@ -2,18 +2,14 @@ import asyncio
 import json
 
 from abc import ABC, abstractmethod
-from typing import Optional
 from pprint import pformat
 
-from aiogram import Bot, Router, F
-from aiogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup, InputPollOption
+from aiogram import Bot, Router
 from aiogram.types import CallbackQuery
-from aiogram.filters import CommandStart, Command
 from aiogram.filters.callback_data import CallbackData
 
 from src.database.db import AsyncDatabaseManager
 from src.database.models import Chats
-from src.telegram_bot.responses import texts
 
 
 # --- DECORATORS ---
@@ -64,7 +60,8 @@ class InitCallbackHandler(BaseCallbackHandler):
         user_id = callback_query.from_user.id
         user_name = callback_query.from_user.username or None
 
-        existing_players = self.db.get_data(Chats, {"chat_id": chat_id}).players
+        existing_players_data = await self.db.get_data(Chats, {"chat_id": chat_id})
+        existing_players = existing_players_data.players
 
         existing_players_dict = await players_list_extractor(existing_players)
 
@@ -73,10 +70,12 @@ class InitCallbackHandler(BaseCallbackHandler):
             "skill_level": 0
         }
 
-        current_player_count = int(self.db.get_data(Chats, {"chat_id": chat_id}).player_count)
+        current_player_count_data = await self.db.get_data(Chats, {"chat_id": chat_id})
+        current_player_count = int(current_player_count_data.player_count)
+
         new_count = current_player_count + 1
 
-        self.db.upsert(
+        await self.db.upsert(
             Chats,
             {"chat_id": chat_id},
             {
@@ -103,7 +102,7 @@ class TeamManagementHandler(BaseCallbackHandler):
         router.callback_query.register(self.handle, TeamManagerCallback.filter())
 
     async def handle(self, callback_query: CallbackQuery, callback_data: TeamManagerCallback, *args, **kwargs):
-        chat_data = self.db.get_data(
+        chat_data = await self.db.get_data(
             Chats,
             {"chat_id": callback_data.chat_id}
         )

@@ -66,7 +66,7 @@ class AsyncDatabaseManager:
         model: Type,
         filters: dict,
         all_records: bool = False
-    ) -> Union[Optional[object], List[object]]:
+    ):
         """Fetch data by filters."""
         async with self.session_factory() as session:
             try:

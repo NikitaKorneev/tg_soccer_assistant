@@ -32,7 +32,7 @@ class PollAnswerHandler(BasePollAnswerHandler):
         router.poll_answer.register(self.handle)
 
     async def handle(self, answer: PollAnswer, *args, **kwargs):
-        poll_for_answer = self.db.get_data(
+        poll_for_answer = await self.db.get_data(
             Polls,
             {"poll_id": answer.poll_id}
         )
@@ -48,7 +48,7 @@ class PollAnswerHandler(BasePollAnswerHandler):
 
             voters[username] = vote
 
-            self.db.upsert(
+            await self.db.upsert(
                 Polls,
                 {
                     "poll_id": answer.poll_id
